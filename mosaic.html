@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				background: gray;
+			}
+			canvas{
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+				background: white;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas></canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload =function (){
+			var canvas = document.querySelector("canvas");
+			
+			if(canvas.getContext){
+				var ctx = canvas.getContext("2d");
+				var img = new Image();
+				img.src = "img/timg.jpg";
+				img.onload = function (){
+					draw(this);
+				}
+				function draw(img){
+					canvas.width = img.width*2;
+					canvas.height = img.height;
+					ctx.drawImage(img,0,0);
+					
+					var size = 5 ;
+					var imgData = ctx.getImageData(0,0,img.width,img.height);
+					
+					for	(var i = 0 ; i < imgData.width/size ; i ++){
+						for(var j = 0 ; j <imgData.height/size ; j ++){
+							var color = getPxInfo(imgData,Math.floor(i*size+Math.random()*size),Math.floor(j*size+Math.random()*size))
+							for(var a = 0 ; a < size ; a ++){
+								for(var b = 0 ; b < size ; b ++){
+									setPxInfo(imgData,i*size+a,j*size+b,color)
+								} 
+							}
+						}
+					}
+					ctx.putImageData(imgData,img.width,0);
+				}
+			} 
+			//工具类
+			function getPxInfo(imgData,x,y){
+				var color =[];
+				var data = imgData.data;
+				var w = imgData.width;
+				var h = imgData.height;
+				color[0]= data[(y*w+x)*4];
+				color[1]= data[(y*w+x)*4+1];
+				color[2]= data[(y*w+x)*4+2];
+				color[3]= data[(y*w+x)*4+3];
+				return color;
+			}
+			function setPxInfo(imgData,x,y,color){
+				var data = imgData.data;
+				var w = imgData.width;
+				var h = imgData.height;
+				data[(y*w+x)*4] = color[0];
+				data[(y*w+x)*4+1] = color[1];
+				data[(y*w+x)*4+2] = color[2];
+				data[(y*w+x)*4+3] = color[3];
+			}
+		}
+	</script>
+</html>
